@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+/* CleanBricks design tokens — approved palette only (Brand Bible §15). */
+@theme {
+  --color-brand: #10b981;
+  --color-lime: #84cc16;
+  --color-sun: #f59e0b;
+  --color-mint: #e3f5e9;
+  --color-ink: #1f2937;
+  --color-paper: #f8faf7;
+
+  --font-sans: var(--font-walsheim), ui-sans-serif, system-ui, sans-serif;
+  --font-display: "ABC Diatype", var(--font-walsheim), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-rise: rise 0.7s var(--ease-out-soft) both;
+  --animate-fade: fade 0.6s ease-out both;
+  --animate-lift: lift 0.7s var(--ease-out-soft) both;
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes lift {
+    from { transform: translateY(20px); }
+    to { transform: none; }
+  }
+  @keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+:root {
+  --nav-h: 5rem;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Anchor targets and focus scrolling clear the fixed navbar. */
+  scroll-padding-top: calc(var(--nav-h) + 1.5rem);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Section reveal: scroll-driven where supported, plain visible otherwise. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    animation-timeline: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Process chain (home): steps and connectors light up one after another. */
+.chain-node,
+.chain-body {
+  transition: opacity 0.6s var(--ease-out-soft), transform 0.6s var(--ease-out-soft);
+}
+.chain-fill {
+  transform: scale(1, 1);
+  transition: transform 0.55s var(--ease-out-soft);
+}
+[data-chain="armed"] .chain-node { opacity: 0; transform: scale(0.5); }
+[data-chain="armed"] .chain-body { opacity: 0; transform: translateY(14px); }
+[data-chain="armed"] .chain-fill,
+[data-chain="play"] .chain-fill { transform: scale(1, 0); transform-origin: top; }
+@media (min-width: 768px) {
+  [data-chain="armed"] .chain-fill,
+  [data-chain="play"] .chain-fill { transform: scale(0, 1); transform-origin: left; }
+}
+[data-chain="play"] .chain-node,
+[data-chain="play"] .chain-body {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i) * 0.8s);
+}
+[data-chain="play"] .chain-fill {
+  transform: scale(1, 1);
+  transition-delay: calc(var(--i) * 0.8s + 0.35s);
+}

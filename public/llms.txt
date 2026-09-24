@@ -1,0 +1,24 @@
+# CleanBricks
+
+> CleanBricks is a modern cleaning and property-care company launching in Lagos, Nigeria. It provides professional cleaning for homes, offices, short-lets, Airbnb spaces and businesses. Tagline: "Cleaner spaces. Better living."
+
+## Services
+- [Residential cleaning](/services/residential-cleaning): regular, deep, move-in, move-out, post-renovation, one-off and recurring cleaning for homes.
+- [Short-let and Airbnb cleaning](/services/short-let-airbnb-cleaning): guest turnover cleaning, apartment resets, linen and room preparation, restocking support, pre-arrival cleaning.
+- [Commercial cleaning](/services/commercial-cleaning): offices, retail spaces, studios, small business premises and common areas.
+
+## Pricing
+- [Pricing](/pricing): Light, Standard and Deep Cleaning prices in naira by property size (self-contained to 5 bedroom). Light Cleaning starts at ₦12,000. Offices and short-lets are quoted on request.
+
+## Information
+- [How it works](/how-it-works): tell us what you need, pick a time, we clean, enjoy the difference.
+- [FAQs](/faqs): booking, pricing, coverage and service questions.
+- [About](/about): why CleanBricks exists, mission, values and ambition.
+- [Journal](/journal): practical cleaning and property-care guides.
+
+## Contact
+- [Book a cleaning](/book)
+- [Contact](/contact)
+- Phone and WhatsApp: +234 903 653 7023
+- Email: bookings@cleanbricks.us
+- Location: Lagos, Nigeria
