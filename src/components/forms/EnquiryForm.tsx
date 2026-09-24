@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { submitEnquiry } from "@/app/actions";
-import { frequencyOptions, propertyOptions, serviceOptions, type EnquiryKind, type FormState } from "@/lib/forms";
+import { frequencyOptions, lagosLgas, propertyOptions, serviceOptions, type EnquiryKind, type FormState } from "@/lib/forms";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { SelectField, TextAreaField, TextField } from "./Field";
@@ -70,15 +70,16 @@ export function EnquiryForm({ kind }: { kind: EnquiryKind }) {
         <>
           <SelectField id="service" label="Service" required options={serviceOptions} defaultValue={v.service} error={e.service} />
           <SelectField id="propertyType" label="Property type" optional options={propertyOptions} defaultValue={v.propertyType} />
-          <TextField id="location" label="Location in Lagos" autoComplete="address-level2" placeholder="Area or neighbourhood" required defaultValue={v.location} error={e.location} />
+          <SelectField id="location" label="Local government area" required options={lagosLgas} defaultValue={v.location} error={e.location} hint="Lagos State" />
+          <TextField id="area" label="Neighbourhood or street" optional placeholder="e.g. Lekki Phase 1" defaultValue={v.area} />
           <TextField id="date" label="Preferred date" type="date" required defaultValue={v.date} error={e.date} />
-          <SelectField id="frequency" label="How often?" optional options={frequencyOptions} defaultValue={v.frequency} className="sm:col-span-2" />
+          <SelectField id="frequency" label="How often?" optional options={frequencyOptions} defaultValue={v.frequency} />
           <TextAreaField id="message" label="Anything we should know?" optional placeholder="Size of the space, access, special requests…" defaultValue={v.message} className="sm:col-span-2" />
         </>
       ) : (
         <>
           <SelectField id="service" label="Service" optional options={serviceOptions} defaultValue={v.service} />
-          <TextField id="location" label="Location" optional autoComplete="address-level2" defaultValue={v.location} />
+          <SelectField id="location" label="Local government area" optional options={lagosLgas} defaultValue={v.location} error={e.location} />
           <TextField id="date" label="Preferred date" type="date" optional defaultValue={v.date} className="sm:col-span-2" />
           <TextAreaField id="message" label="Message" required placeholder="Tell us how we can help" defaultValue={v.message} error={e.message} className="sm:col-span-2" />
         </>

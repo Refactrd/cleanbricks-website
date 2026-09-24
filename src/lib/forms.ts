@@ -22,6 +22,30 @@ export const propertyOptions = ["Apartment", "House", "Short-let apartment", "Of
 
 export const frequencyOptions = ["One-off", "Weekly", "Fortnightly", "Monthly", "Not sure yet"] as const;
 
+/** The 20 Local Government Areas of Lagos State. */
+export const lagosLgas = [
+  "Agege",
+  "Ajeromi-Ifelodun",
+  "Alimosho",
+  "Amuwo-Odofin",
+  "Apapa",
+  "Badagry",
+  "Epe",
+  "Eti-Osa",
+  "Ibeju-Lekki",
+  "Ifako-Ijaiye",
+  "Ikeja",
+  "Ikorodu",
+  "Kosofe",
+  "Lagos Island",
+  "Lagos Mainland",
+  "Mushin",
+  "Ojo",
+  "Oshodi-Isolo",
+  "Shomolu",
+  "Surulere",
+] as const;
+
 export const fieldNames = [
   "name",
   "phone",
@@ -29,6 +53,7 @@ export const fieldNames = [
   "service",
   "propertyType",
   "location",
+  "area",
   "date",
   "frequency",
   "message",

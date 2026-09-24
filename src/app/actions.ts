@@ -1,7 +1,7 @@
 "use server";
 
 import type { EnquiryKind, FormState } from "@/lib/forms";
-import { fieldNames } from "@/lib/forms";
+import { fieldNames, lagosLgas } from "@/lib/forms";
 
 const PHONE = /^\+?[\d\s\-()]{7,20}$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -20,10 +20,14 @@ export async function submitEnquiry(_prev: FormState, formData: FormData): Promi
   if (values.email && !EMAIL.test(values.email)) errors.email = "That email address does not look right.";
   if (kind === "booking") {
     if (!values.service) errors.service = "Choose the service you need.";
-    if (!values.location) errors.location = "Tell us where the clean is.";
+    if (!values.location) errors.location = "Choose the local government area.";
     if (!values.date) errors.date = "Pick a preferred date.";
   } else if (values.message.length < 5) {
     errors.message = "Add a short message so we know how to help.";
+  }
+
+  if (values.location && !(lagosLgas as readonly string[]).includes(values.location)) {
+    errors.location = "Choose a local government area from the list.";
   }
 
   if (Object.keys(errors).length) {
