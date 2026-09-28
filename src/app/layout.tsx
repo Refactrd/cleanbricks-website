@@ -3,10 +3,9 @@ import { walsheim } from "@/lib/fonts";
 import { logos } from "@/lib/images";
 import { site } from "@/lib/site";
 import { services } from "@/lib/services";
-import { tiers } from "@/lib/pricing";
+import { cleaningTypeInfo } from "@/lib/pricing-engine/config";
 import { JsonLd } from "@/lib/seo";
-import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -38,7 +37,7 @@ const siteSchema = [
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Cleaning services",
-      itemListElement: [...services.map((s) => s.title), ...tiers.map((t) => t.name)].map((name) => ({
+      itemListElement: [...services.map((s) => s.title), ...Object.values(cleaningTypeInfo).map((t) => t.name)].map((name) => ({
         "@type": "Offer",
         itemOffered: { "@type": "Service", name },
       })),
@@ -65,11 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <Navbar />
-        <div id="page">
-          <main id="main">{children}</main>
-          <Footer />
-        </div>
+        <SiteChrome>{children}</SiteChrome>
         <JsonLd data={siteSchema} />
       </body>
     </html>

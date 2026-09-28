@@ -44,6 +44,21 @@ const paths = {
       <path d="M8 3.500v4M16 3.500v4M4 10h16" />
     </>
   ),
+  minus: <path d="M5 12h14" />,
+  search: (
+    <>
+      <circle cx="10.500" cy="10.500" r="6.500" />
+      <path d="m20 20-4.35-4.35" />
+    </>
+  ),
+  close: <path d="m6 6 12 12M18 6 6 18" />,
+  info: (
+    <>
+      <circle cx="12" cy="12" r="8.500" />
+      <path d="M12 11v5.500M12 7.750v.010" />
+    </>
+  ),
+  spinner: <path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5" />,
 } as const;
 
 export type IconName = keyof typeof paths;

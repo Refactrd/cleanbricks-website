@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { CTASection } from "@/components/sections/CTASection";
 import { PageHeader } from "@/components/sections/PageHeader";
+import { CleaningTypesExplainer } from "@/components/pricing/CleaningTypesExplainer";
 import { pageMeta } from "@/lib/seo";
 import { services } from "@/lib/services";
 
@@ -71,7 +72,30 @@ export default function ServicesPage() {
         </Container>
       </section>
 
-      <section className="bg-mint py-16 sm:py-20">
+      <section id="cleaning-types" className="bg-mint py-20 sm:py-28">
+        <Container>
+          <div className="reveal mx-auto mb-12 max-w-2xl text-center sm:mb-16">
+            <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-paper px-3.5 py-1.5 text-xs font-medium tracking-[0.12em] text-ink uppercase">
+              <span className="size-1.5 rounded-full bg-brand" aria-hidden="true" />
+              Light, Standard or Deep
+            </p>
+            <h2 className="font-display text-[clamp(2rem,4.2vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.02em] text-balance">
+              What&rsquo;s the difference?
+            </h2>
+            <p className="mt-5 text-lg leading-relaxed text-ink/75">
+              Every residential clean is one of these three. Tap a card for exactly what&rsquo;s included, and what isn&rsquo;t.
+            </p>
+          </div>
+          <CleaningTypesExplainer />
+          <div className="mt-10 text-center">
+            <Button href="/book" arrow>
+              Book a Cleaning
+            </Button>
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-paper py-16 sm:py-20">
         <Container className="reveal max-w-3xl text-center">
           <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Starting with cleaning. Built to grow.</h2>
           <p className="mt-4 text-lg leading-relaxed text-ink/75">

@@ -36,7 +36,7 @@ export const faqs: Faq[] = [
   },
   {
     q: "How much does cleaning cost?",
-    a: "Residential prices depend on the type of clean (Light, Standard or Deep) and your property size, from self-contained to 5 bedroom. See the Pricing page. For offices, short-lets and anything not listed, contact us and we will send a quote.",
+    a: "It depends on the type of clean (Light, Standard or Deep), the size of your space and your location. Start a booking and you will see your price build up as you go, before you confirm anything. For offices, short-lets and anything not listed, contact us and we will send a quote.",
   },
   {
     q: "Which areas of Lagos do you cover?",

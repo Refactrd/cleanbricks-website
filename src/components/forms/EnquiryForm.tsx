@@ -2,18 +2,20 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { submitEnquiry } from "@/app/actions";
-import { frequencyOptions, lagosLgas, propertyOptions, serviceOptions, type EnquiryKind, type FormState } from "@/lib/forms";
+import { fieldNames, lagosLgas, serviceOptions, type EnquiryKind, type FormState } from "@/lib/forms";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { enquiryText } from "@/lib/enquiry";
+import { site, whatsappHref } from "@/lib/site";
 import { SelectField, TextAreaField, TextField } from "./Field";
 
 const initial: FormState = { status: "idle" };
 
-export function EnquiryForm({ kind }: { kind: EnquiryKind }) {
+/** The general enquiry form (Contact page). Booking now has its own step-by-step flow — see BookingWizard. */
+export function EnquiryForm({ kind = "contact" }: { kind?: EnquiryKind }) {
   const [state, action, pending] = useActionState(submitEnquiry, initial);
   const formRef = useRef<HTMLFormElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
-  const booking = kind === "booking";
   const e = state.errors ?? {};
   const v = state.values ?? {};
 
@@ -26,20 +28,23 @@ export function EnquiryForm({ kind }: { kind: EnquiryKind }) {
     }
   }, [state]);
 
+  // Open WhatsApp with whatever the visitor has filled in so far.
+  const sendViaWhatsApp = () => {
+    if (!site.contact.whatsapp || !formRef.current) return;
+    const data = new FormData(formRef.current);
+    const values: Record<string, string> = {};
+    for (const f of fieldNames) values[f] = String(data.get(f) ?? "").trim();
+    window.open(whatsappHref(site.contact.whatsapp, enquiryText(kind, values)), "_blank", "noopener,noreferrer");
+  };
+
   if (state.status === "success") {
     return (
       <div ref={successRef} tabIndex={-1} role="status" className="rounded-3xl bg-mint p-8 text-center sm:p-12">
         <span className="mx-auto grid size-16 place-items-center rounded-full bg-brand text-ink">
           <Icon name="check" className="size-8" />
         </span>
-        <h2 className="mt-6 font-display text-3xl font-bold tracking-tight">
-          {booking ? "Thanks, your request is in." : "Thanks, we have your message."}
-        </h2>
-        <p className="mx-auto mt-3 max-w-md text-lg leading-relaxed text-ink/75">
-          {booking
-            ? "We will get back to you to confirm your date and the details of your clean."
-            : "We will get back to you as soon as we can."}
-        </p>
+        <h2 className="mt-6 font-display text-3xl font-bold tracking-tight">Thanks, we have your message.</h2>
+        <p className="mx-auto mt-3 max-w-md text-lg leading-relaxed text-ink/75">We will get back to you as soon as we can.</p>
       </div>
     );
   }
@@ -64,31 +69,24 @@ export function EnquiryForm({ kind }: { kind: EnquiryKind }) {
 
       <TextField id="name" label="Full name" autoComplete="name" required defaultValue={v.name} error={e.name} />
       <TextField id="phone" label="Phone number" type="tel" autoComplete="tel" inputMode="tel" required defaultValue={v.phone} error={e.phone} />
-      <TextField id="email" label="Email" type="email" autoComplete="email" optional defaultValue={v.email} error={e.email} className={booking ? "" : "sm:col-span-2"} />
-
-      {booking ? (
-        <>
-          <SelectField id="service" label="Service" required options={serviceOptions} defaultValue={v.service} error={e.service} />
-          <SelectField id="propertyType" label="Property type" optional options={propertyOptions} defaultValue={v.propertyType} />
-          <SelectField id="location" label="Local government area" required options={lagosLgas} defaultValue={v.location} error={e.location} hint="Lagos State" />
-          <TextField id="area" label="Neighbourhood or street" optional placeholder="e.g. Lekki Phase 1" defaultValue={v.area} />
-          <TextField id="date" label="Preferred date" type="date" required defaultValue={v.date} error={e.date} />
-          <SelectField id="frequency" label="How often?" optional options={frequencyOptions} defaultValue={v.frequency} />
-          <TextAreaField id="message" label="Anything we should know?" optional placeholder="Size of the space, access, special requests…" defaultValue={v.message} className="sm:col-span-2" />
-        </>
-      ) : (
-        <>
-          <SelectField id="service" label="Service" optional options={serviceOptions} defaultValue={v.service} />
-          <SelectField id="location" label="Local government area" optional options={lagosLgas} defaultValue={v.location} error={e.location} />
-          <TextField id="date" label="Preferred date" type="date" optional defaultValue={v.date} className="sm:col-span-2" />
-          <TextAreaField id="message" label="Message" required placeholder="Tell us how we can help" defaultValue={v.message} error={e.message} className="sm:col-span-2" />
-        </>
-      )}
+      <TextField id="email" label="Email" type="email" autoComplete="email" optional defaultValue={v.email} error={e.email} className="sm:col-span-2" />
+      <SelectField id="service" label="Service" optional options={serviceOptions} defaultValue={v.service} />
+      <SelectField id="location" label="Local government area" optional options={lagosLgas} defaultValue={v.location} error={e.location} />
+      <TextField id="date" label="Preferred date" type="date" optional defaultValue={v.date} className="sm:col-span-2" />
+      <TextAreaField id="message" label="Message" required placeholder="Tell us how we can help" defaultValue={v.message} error={e.message} className="sm:col-span-2" />
 
       <div className="sm:col-span-2">
-        <Button type="submit" arrow disabled={pending} className="w-full sm:w-auto">
-          {pending ? "Sending…" : booking ? "Request a Booking" : "Send Message"}
-        </Button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Button type="submit" arrow disabled={pending} className="w-full sm:w-auto">
+            {pending ? "Sending…" : "Send Message"}
+          </Button>
+          {site.contact.whatsapp && (
+            <Button type="button" variant="outline" onClick={sendViaWhatsApp} className="w-full sm:w-auto">
+              <Icon name="chat" className="size-5" />
+              Send via WhatsApp
+            </Button>
+          )}
+        </div>
         <p className="mt-3 text-sm text-ink/75">We only use your details to respond to your request.</p>
       </div>
     </form>

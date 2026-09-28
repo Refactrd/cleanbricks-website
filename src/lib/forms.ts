@@ -8,8 +8,9 @@ export type FormState = {
 };
 
 export const serviceOptions = [
-  "Regular home cleaning",
-  "Deep cleaning",
+  "Light Cleaning",
+  "Standard Cleaning",
+  "Deep Cleaning",
   "Move-in cleaning",
   "Move-out cleaning",
   "Post-renovation cleaning",
@@ -18,9 +19,22 @@ export const serviceOptions = [
   "Not sure yet",
 ] as const;
 
+/** The three home-cleaning tiers that open the live pricing calculator on the booking form. */
+const homeCleaningServiceMap: Partial<Record<(typeof serviceOptions)[number], import("./pricing-engine/types").CleaningType>> = {
+  "Light Cleaning": "light",
+  "Standard Cleaning": "standard",
+  "Deep Cleaning": "deep",
+};
+
+export function serviceToCleaningType(service?: string) {
+  return service ? (homeCleaningServiceMap[service as (typeof serviceOptions)[number]] ?? null) : null;
+}
+
 export const propertyOptions = ["Apartment", "House", "Short-let apartment", "Office", "Retail or studio", "Other"] as const;
 
 export const frequencyOptions = ["One-off", "Weekly", "Fortnightly", "Monthly", "Not sure yet"] as const;
+
+export const timeSlotOptions = ["8am – 10am", "10am – 12pm", "12pm – 2pm", "2pm – 4pm"] as const;
 
 /** The 20 Local Government Areas of Lagos State. */
 export const lagosLgas = [
@@ -55,6 +69,9 @@ export const fieldNames = [
   "location",
   "area",
   "date",
+  "timeSlot",
   "frequency",
   "message",
+  "pricingConfigJson",
+  "pricingSummary",
 ] as const;

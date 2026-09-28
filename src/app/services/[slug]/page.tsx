@@ -51,8 +51,8 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           <Button href="/book" arrow>
             Book a Cleaning
           </Button>
-          <Button href={s.slug === "residential-cleaning" ? "/pricing" : "/contact"} variant="outline">
-            {s.slug === "residential-cleaning" ? "See Pricing" : "Get a Quote"}
+          <Button href={s.slug === "residential-cleaning" ? "/services#cleaning-types" : "/contact"} variant="outline">
+            {s.slug === "residential-cleaning" ? "Compare Light, Standard & Deep" : "Get a Quote"}
           </Button>
         </div>
       </PageHeader>

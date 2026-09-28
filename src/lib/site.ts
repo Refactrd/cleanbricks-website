@@ -18,12 +18,12 @@ export const site = {
 
 const digits = (v: string) => v.replace(/\D/g, "");
 export const phoneHref = (v: string) => `tel:+${digits(v)}`;
-export const whatsappHref = (v: string) => `https://wa.me/${digits(v)}`;
+export const whatsappHref = (v: string, text?: string) =>
+  `https://wa.me/${digits(v)}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
 
 export const nav = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
-  { label: "Pricing", href: "/pricing" },
   { label: "How it works", href: "/how-it-works" },
   { label: "About", href: "/about" },
   { label: "Journal", href: "/journal" },
@@ -37,7 +37,6 @@ export const footerGroups = [
       { label: "Residential cleaning", href: "/services/residential-cleaning" },
       { label: "Short-let & Airbnb", href: "/services/short-let-airbnb-cleaning" },
       { label: "Commercial cleaning", href: "/services/commercial-cleaning" },
-      { label: "Pricing", href: "/pricing" },
     ],
   },
   {

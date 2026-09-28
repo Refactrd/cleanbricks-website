@@ -40,7 +40,7 @@ export const services: Service[] = [
       { title: "Post-renovation cleaning", text: "Clear the dust and leftovers once the work is finished." },
       { title: "One-off or recurring", text: "Book a single visit, or set a schedule that suits your week." },
     ],
-    note: "Prices start from ₦12,000 depending on the clean and your property size. See the pricing page, or tell us about your space and we will confirm what is involved before you book.",
+    note: "Prices depend on your property and the type of clean. Start a booking and you will see your price as you configure it, before you confirm anything.",
   },
   {
     slug: "short-let-airbnb-cleaning",

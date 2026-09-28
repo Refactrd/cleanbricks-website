@@ -57,15 +57,19 @@ export function SelectField({
   optional,
   className,
   options,
-  defaultValue = "",
+  defaultValue,
+  value,
   ...rest
 }: Shared & Omit<SelectHTMLAttributes<HTMLSelectElement>, "id"> & { options: readonly string[] }) {
+  // Controlled (value) and uncontrolled (defaultValue) usage both need to work without React's
+  // "contains both value and defaultValue" warning, so only one of the two is ever applied.
+  const valueProps = value !== undefined ? { value } : { defaultValue: defaultValue ?? "" };
   return (
     <Wrap {...{ id, label, error, hint, optional, className }}>
       <select
         id={id}
         name={id}
-        defaultValue={defaultValue}
+        {...valueProps}
         aria-invalid={!!error}
         aria-describedby={describe(id, error, hint)}
         className={`${control} appearance-none bg-[url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%231F2937' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 8 5 5 5-5'/%3E%3C/svg%3E")] bg-[length:1.25rem] bg-[right_1rem_center] bg-no-repeat pr-11`}

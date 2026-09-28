@@ -12,7 +12,8 @@ import { SpacesGallery } from "@/components/sections/SpacesGallery";
 import { Icon } from "@/components/ui/Icon";
 import { faqs, whyPoints } from "@/lib/content";
 import { photos } from "@/lib/images";
-import { naira, tiers } from "@/lib/pricing";
+import { cleaningTypeInfo } from "@/lib/pricing-engine/config";
+import { cleaningTypes } from "@/lib/pricing-engine/types";
 import { posts } from "@/lib/journal";
 import { pageMeta } from "@/lib/seo";
 import { site } from "@/lib/site";
@@ -56,28 +57,29 @@ export default function HomePage() {
         </Container>
       </section>
 
-      <section aria-labelledby="pricing-heading" className="bg-mint py-20 sm:py-28">
+      <section aria-labelledby="types-heading" className="bg-mint py-20 sm:py-28">
         <Container>
           <SectionHeading
-            eyebrow="Pricing"
-            title={<span id="pricing-heading">Clear prices by property size</span>}
-            text="Choose Light, Standard or Deep Cleaning, then find your property size."
+            eyebrow="Light, Standard or Deep"
+            title={<span id="types-heading">Three levels of clean, so you get the right one</span>}
+            text="Not sure which one you need? Here is exactly what each one covers."
             className="mb-12"
           />
           <ul className="grid gap-5 md:grid-cols-3">
-            {tiers.map((t) => (
-              <li key={t.id} className={`reveal rounded-3xl p-7 sm:p-8 ${t.badge ? "bg-ink text-paper" : "bg-paper"}`}>
-                {t.badge && <span className="mb-4 inline-flex rounded-full bg-sun px-3 py-1 text-xs font-medium text-ink">{t.badge}</span>}
-                <h3 className="font-display text-2xl font-bold tracking-tight">{t.name}</h3>
-                <p className={`mt-2 leading-relaxed ${t.badge ? "text-paper/75" : "text-ink/75"}`}>{t.summary}</p>
-                <p className="mt-8 text-sm">From</p>
-                <p className="font-display text-4xl font-bold tracking-tight">{naira(Math.min(...t.prices))}</p>
-              </li>
-            ))}
+            {cleaningTypes.map((t) => {
+              const info = cleaningTypeInfo[t];
+              return (
+                <li key={t} className={`reveal rounded-3xl p-7 sm:p-8 ${t === "standard" ? "bg-ink text-paper" : "bg-paper"}`}>
+                  {t === "standard" && <span className="mb-4 inline-flex rounded-full bg-sun px-3 py-1 text-xs font-medium text-ink">Most popular</span>}
+                  <h3 className="font-display text-2xl font-bold tracking-tight">{info.name}</h3>
+                  <p className={`mt-2 leading-relaxed ${t === "standard" ? "text-paper/75" : "text-ink/75"}`}>{info.tagline}</p>
+                </li>
+              );
+            })}
           </ul>
           <div className="mt-10 text-center">
-            <Button href="/pricing" variant="dark" arrow>
-              See full pricing
+            <Button href="/services#cleaning-types" variant="dark" arrow>
+              See what&rsquo;s included in each
             </Button>
           </div>
         </Container>
