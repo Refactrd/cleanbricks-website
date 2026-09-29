@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { TextAreaField } from "@/components/forms/Field";
-import { extraTaskLabels, spaceLabels } from "@/lib/pricing-engine/config";
-import { extraTaskTypes, spaceTypes } from "@/lib/pricing-engine/types";
+import { summariseExtras, summariseProperty } from "@/lib/pricing-engine/format";
 import type { WizardValues } from "../wizard-types";
 
 type Props = {
@@ -23,18 +22,8 @@ const row = (label: string, value: string) =>
   ) : null;
 
 export function SummaryStep({ values, update, pricingConfigJson, pricingSummary, formAction, pending, messageError }: Props) {
-  const spaceSummary = values.cleaningType
-    ? spaceTypes
-        .filter((s) => values.property[s] > 0)
-        .map((s) => `${values.property[s]} ${spaceLabels[s]}${values.property[s] > 1 ? "s" : ""}`)
-        .join(", ")
-    : "";
-  const extrasSummary = values.cleaningType
-    ? extraTaskTypes
-        .filter((t) => values.extras[t] > 0)
-        .map((t) => `${extraTaskLabels[t]}${t === "windows" ? "" : ` × ${values.extras[t]}`}`)
-        .join(", ")
-    : "";
+  const spaceSummary = values.cleaningType ? summariseProperty(values.property) : "";
+  const extrasSummary = values.cleaningType ? summariseExtras(values.extras) : "";
 
   return (
     <div className="space-y-6">

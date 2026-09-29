@@ -3,9 +3,11 @@
 import type { EnquiryKind, FormState } from "@/lib/forms";
 import { enquiryHtml, enquirySubject, enquiryText } from "@/lib/enquiry";
 import { fieldNames, lagosLgas } from "@/lib/forms";
+import { bookingConfirmationHtml, bookingConfirmationSubject, bookingConfirmationText } from "@/lib/emails/bookingConfirmation";
 import { calculateQuote } from "@/lib/pricing-engine/calculate";
 import { formatQuoteText } from "@/lib/pricing-engine/format";
 import { parseBookingConfig } from "@/lib/pricing-engine/parse";
+import type { BookingConfig, QuoteBreakdown } from "@/lib/pricing-engine/types";
 import { site } from "@/lib/site";
 
 const PHONE = /^\+?[\d\s\-()]{7,20}$/;
@@ -36,8 +38,12 @@ export async function submitEnquiry(_prev: FormState, formData: FormData): Promi
   // pricingConfigJson instead of a plain LGA. Recompute the price here —
   // authoritatively, never trusting whatever total the browser displayed —
   // and use that same recalculation to check the address is serviceable.
+  // config/quote are hoisted so the customer confirmation email below can
+  // reuse the exact same authoritative numbers, not re-derive them.
+  let config: BookingConfig | null = null;
+  let quote: QuoteBreakdown | null = null;
   if (values.pricingConfigJson) {
-    const config = (() => {
+    config = (() => {
       try {
         const envelope = JSON.parse(values.pricingConfigJson);
         return parseBookingConfig(envelope?.config ?? envelope);
@@ -52,7 +58,8 @@ export async function submitEnquiry(_prev: FormState, formData: FormData): Promi
         ? "We don't currently serve this location. Please message us on WhatsApp and we'll confirm what's possible."
         : "Choose your address so we can confirm coverage and the location fee.";
     } else {
-      values.pricingSummary = formatQuoteText(calculateQuote(config), values.location || undefined);
+      quote = calculateQuote(config);
+      values.pricingSummary = formatQuoteText(quote, values.location || undefined);
     }
   } else if (!values.location) {
     if (kind === "booking") errors.location = "Choose the local government area.";
@@ -87,8 +94,13 @@ export async function submitEnquiry(_prev: FormState, formData: FormData): Promi
         headers: { "content-type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ kind, ...values, receivedAt: new Date().toISOString() }),
       })
-        .then((r) => {
-          if (!r.ok) throw new Error(`Sheet webhook responded ${r.status}`);
+        .then(async (r) => {
+          // A misconfigured Apps Script deployment (e.g. access set to require a Google
+          // sign-in) still returns a 200 — just the HTML of a login page, not our script's
+          // output — so a bare `r.ok` check can silently report success on a row that was
+          // never written. The script always replies with the exact text "ok" on a real run.
+          const text = await r.text();
+          if (!r.ok || text.trim() !== "ok") throw new Error(`Sheet webhook responded ${r.status}: ${text.slice(0, 300)}`);
           return true;
         })
         .catch((err) => {
@@ -121,8 +133,31 @@ export async function submitEnquiry(_prev: FormState, formData: FormData): Promi
         })
     : Promise.resolve(false);
 
-  const [sheetOk, emailOk] = await Promise.all([logToSheet, sendEmail]);
-  // The request counts as received if at least one channel captured it.
+  // Customer confirmation: only for bookings, and only when they gave an email —
+  // best-effort, never blocks or affects the success/failure of the booking itself.
+  const sendCustomerEmail =
+    resendKey && kind === "booking" && values.email
+      ? fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { "content-type": "application/json", authorization: `Bearer ${resendKey}` },
+          body: JSON.stringify({
+            from: process.env.ENQUIRY_FROM_EMAIL ?? "CleanBricks <onboarding@resend.dev>",
+            to: [values.email],
+            ...(site.contact.email && { reply_to: site.contact.email }),
+            subject: bookingConfirmationSubject(values),
+            html: bookingConfirmationHtml(values, config, quote),
+            text: bookingConfirmationText(values, config, quote),
+          }),
+        })
+          .then((r) => {
+            if (!r.ok) throw new Error(`Resend (customer) responded ${r.status}`);
+          })
+          .catch((err) => console.error("Customer confirmation email failed", err))
+      : Promise.resolve();
+
+  const [sheetOk, emailOk] = await Promise.all([logToSheet, sendEmail, sendCustomerEmail]);
+  // The request counts as received if at least one team-facing channel captured it —
+  // the customer confirmation above is a nice-to-have and never gates this.
   if (emailOk || sheetOk) return { status: "success" };
 
   return { status: "error", values, message: "Something went wrong sending that. Please try again, or message us on WhatsApp." };
